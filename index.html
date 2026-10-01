@@ -108,12 +108,25 @@
   .price-row .price { font-family: "Cormorant Garamond", serif; font-size: 24px; color: var(--gold-light); }
   .small { font-size: 14px; color: var(--muted); margin-top: 18px; }
 
-  /* ---------- Портфолио ---------- */
-  .gallery { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-  .gallery figure { position: relative; overflow: hidden; border-radius: 14px; cursor: zoom-in; aspect-ratio: 3/4; border: 1px solid rgba(227,201,146,.4); }
-  .gallery img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
-  .gallery figure:hover img { transform: scale(1.06); }
-  .gallery figcaption { position: absolute; left: 8px; bottom: 6px; font-size: 11px; color: #fff; text-shadow: 0 1px 3px #000; opacity: .85; }
+  /* ---------- Портфолио: карусель из 5 фото ---------- */
+  /* Видно 4 фото (на телефоне 2), карусель листает по одному по кругу */
+  .carousel { --vis: 4; --gap: 12px; display: flex; align-items: center; gap: 14px; max-width: 900px; margin: 0 auto; }
+  .car-viewport { flex: 1; overflow: hidden; border-radius: 14px; }
+  .car-track { display: flex; gap: var(--gap); transition: transform .6s cubic-bezier(.4, 0, .2, 1); will-change: transform; }
+  .car-track figure { flex: 0 0 calc((100% - (var(--vis) - 1) * var(--gap)) / var(--vis)); position: relative; overflow: hidden;
+                      border-radius: 14px; cursor: zoom-in; aspect-ratio: 3/4; border: 1px solid rgba(227,201,146,.4); }
+  .car-track img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
+  .car-track figure:hover img { transform: scale(1.06); }
+  .car-track figcaption { position: absolute; left: 8px; bottom: 6px; font-size: 11px; color: #fff; text-shadow: 0 1px 3px #000; opacity: .85; }
+  .car-arrow { flex: 0 0 auto; width: 46px; height: 46px; border-radius: 50%; border: 1px solid var(--gold); background: rgba(0,0,0,.25);
+               color: var(--gold-light); font-size: 26px; line-height: 1; cursor: pointer; transition: background .2s; }
+  .car-arrow:hover { background: rgba(227,201,146,.18); }
+  .car-controls { text-align: center; margin-top: 18px; }
+  .car-pause { font: 600 14px/1 "Manrope", sans-serif; color: var(--gold-light); background: transparent; border: 1px solid rgba(227,201,146,.6);
+               border-radius: 30px; padding: 10px 20px; cursor: pointer; }
+  .car-pause:hover { background: rgba(227,201,146,.12); }
+  .car-arrow:focus-visible, .car-pause:focus-visible, .contact-btns a:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { .car-track { transition: none; } }
   .lightbox { position: fixed; inset: 0; background: rgba(3,30,22,.95); display: none; align-items: center; justify-content: center; z-index: 60; }
   .lightbox.open { display: flex; }
   .lightbox img { max-width: 90vw; max-height: 86vh; border-radius: 8px; }
@@ -135,10 +148,30 @@
   .place h3 { font-size: 26px; margin: 10px 0; color: #0a4a3a; }
   .contacts { text-align: center; }
   .contact-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin: 26px 0 10px; }
-  .contact-btns a { display: flex; align-items: center; gap: 10px; padding: 14px 26px; border-radius: 40px; text-decoration: none;
-                    background: var(--card); color: var(--ink); font-weight: 600; }
-  .contact-btns a:hover { background: #f4ecdc; }
-  .contact-btns .icon { width: 22px; height: 22px; }
+  /* Кнопки записи - отполированные камни нефрита: объём, прожилки, блик сверху.
+     При наведении камень приподнимается и светится. По кнопкам бежит волна блика. */
+  .contact-btns a { position: relative; overflow: hidden; isolation: isolate; display: flex; align-items: center; gap: 10px;
+                    padding: 15px 28px; border-radius: 40px; text-decoration: none; color: #e9cf8e; font-weight: 600;
+                    text-shadow: 0 1px 2px rgba(0,20,12,.8); border: 1px solid rgba(227,201,146,.6);
+                    background: var(--marble) 30% 40% / 260px,
+                                radial-gradient(130% 160% at 30% 15%, #3f9a78 0%, #17694f 32%, #0b4635 64%, #04261c 100%);
+                    box-shadow: inset 0 2px 2px rgba(255,255,255,.45), inset 0 -8px 14px rgba(0,25,18,.5),
+                                0 10px 22px rgba(0,0,0,.45);
+                    transition: transform .25s ease, box-shadow .25s ease; }
+  /* глянцевый блик сверху, как на полированном камне */
+  .contact-btns a::before { content: ""; position: absolute; left: 10%; right: 10%; top: 2px; height: 45%; z-index: -1; border-radius: 40px;
+                            background: linear-gradient(180deg, rgba(255,255,255,.38), rgba(255,255,255,0)); }
+  /* бегущая волна блика: полоса света проходит по кнопкам по очереди */
+  .contact-btns a::after { content: ""; position: absolute; top: -20%; bottom: -20%; left: -60%; width: 45%; z-index: 1; pointer-events: none;
+                           background: linear-gradient(100deg, rgba(255,255,255,0), rgba(255,250,225,.55) 50%, rgba(255,255,255,0));
+                           transform: skewX(-18deg); animation: shine 4.5s ease-in-out infinite; }
+  .contact-btns a:nth-child(2)::after { animation-delay: .35s; }
+  .contact-btns a:nth-child(3)::after { animation-delay: .7s; }
+  @keyframes shine { 0% { left: -60%; } 28%, 100% { left: 130%; } }
+  .contact-btns a:hover { transform: translateY(-5px);
+                          box-shadow: inset 0 2px 2px rgba(255,255,255,.4), inset 0 -8px 14px rgba(0,25,18,.5),
+                                      0 16px 28px rgba(0,0,0,.4), 0 0 24px rgba(110,220,170,.55); }
+  .contact-btns .icon { width: 22px; height: 22px; stroke: var(--gold-light); }
   footer { text-align: center; color: var(--muted); font-size: 13px; padding: 30px 20px 10px; }
 
   /* ---------- Липкая кнопка и "Наверх / Вернуться" ---------- */
@@ -163,7 +196,8 @@
     .btn-line { margin: 12px 0 0; }
     .about-grid { grid-template-columns: 1fr 1fr; }
     .price-list, .place, .reviews { grid-template-columns: 1fr; }
-    .gallery { grid-template-columns: 1fr 1fr; }
+    .carousel { --vis: 2; gap: 8px; }
+    .car-arrow { width: 38px; height: 38px; font-size: 22px; }
     section { padding: 60px 0; }
     .sticky { display: block; }
     .back { bottom: 84px; }
@@ -255,16 +289,20 @@
   <div class="wrap">
     <div class="eyebrow">Портфолио</div>
     <h2>Образы</h2>
-    <div class="gallery">
-      <figure><img src="https://images.unsplash.com/photo-1549236177-77e8271c34b6?w=700&q=80" alt="Образ 1" loading="lazy"><figcaption>фото-пример</figcaption></figure>
-      <figure><img src="https://images.unsplash.com/photo-1606158562001-5b5a8729a80b?w=700&q=80" alt="Образ 2" loading="lazy"><figcaption>фото-пример</figcaption></figure>
-      <figure><img src="https://images.unsplash.com/photo-1611590027211-b954fd027b51?w=700&q=80" alt="Образ 3" loading="lazy"><figcaption>фото-пример</figcaption></figure>
-      <figure><img src="https://images.unsplash.com/photo-1709136331829-033933e1913d?w=700&q=80" alt="Образ 4" loading="lazy"><figcaption>фото-пример</figcaption></figure>
-      <figure><img src="https://images.unsplash.com/photo-1762074973099-78f2169c9177?w=700&q=80" alt="Образ 5" loading="lazy"><figcaption>фото-пример</figcaption></figure>
-      <figure><img src="https://images.unsplash.com/photo-1788886989127-d0a4676ae10a?w=700&q=80" alt="Образ 6" loading="lazy"><figcaption>фото-пример</figcaption></figure>
-      <figure><img src="https://images.unsplash.com/photo-1578220154766-1c39bcecc1dc?w=700&q=80" alt="Образ 7" loading="lazy"><figcaption>фото-пример</figcaption></figure>
-      <figure><img src="https://images.unsplash.com/photo-1709477542149-f4e0e21d590b?w=700&q=80" alt="Образ 8" loading="lazy"><figcaption>фото-пример</figcaption></figure>
+    <div class="carousel" aria-roledescription="карусель" aria-label="Образы">
+      <button class="car-arrow" id="carPrev" type="button" aria-label="Предыдущее фото">‹</button>
+      <div class="car-viewport">
+        <div class="car-track" id="carTrack">
+          <figure data-i="0"><img src="https://images.unsplash.com/photo-1549236177-77e8271c34b6?w=700&q=80" alt="Образ 1"><figcaption>фото-пример</figcaption></figure>
+          <figure data-i="1"><img src="https://images.unsplash.com/photo-1606158562001-5b5a8729a80b?w=700&q=80" alt="Образ 2"><figcaption>фото-пример</figcaption></figure>
+          <figure data-i="2"><img src="https://images.unsplash.com/photo-1611590027211-b954fd027b51?w=700&q=80" alt="Образ 3"><figcaption>фото-пример</figcaption></figure>
+          <figure data-i="3"><img src="https://images.unsplash.com/photo-1709136331829-033933e1913d?w=700&q=80" alt="Образ 4"><figcaption>фото-пример</figcaption></figure>
+          <figure data-i="4"><img src="https://images.unsplash.com/photo-1762074973099-78f2169c9177?w=700&q=80" alt="Образ 5"><figcaption>фото-пример</figcaption></figure>
+        </div>
+      </div>
+      <button class="car-arrow" id="carNext" type="button" aria-label="Следующее фото">›</button>
     </div>
+    <div class="car-controls"><button class="car-pause" id="carPause" type="button" aria-pressed="false">❚❚ Пауза</button></div>
   </div>
 </section>
 
@@ -320,19 +358,64 @@
 </div>
 
 <script>
-  // Портфолио на весь экран
-  const imgs = [...document.querySelectorAll('.gallery img')];
+  // Карусель портфолио: по кругу, сама листает каждые 3 секунды, стрелки - по одному фото, кнопка "Пауза"
+  const track = document.getElementById('carTrack');
+  const originals = [...track.children];
+  const N = originals.length;
+  // Копии фото до и после, чтобы карусель шла по кругу без скачков
+  originals.forEach(f => track.appendChild(f.cloneNode(true)));
+  originals.slice().reverse().forEach(f => track.insertBefore(f.cloneNode(true), track.firstChild));
+  [...track.children].forEach((f, k) => { if (k < N || k >= 2 * N) f.setAttribute('aria-hidden', 'true'); });
+  const smooth = !matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let pos = N, paused = false, timer = null;
+  const step = () => originals[0].offsetWidth + parseFloat(getComputedStyle(track).columnGap || 0);
+  const place = (animate) => {
+    track.style.transition = animate && smooth ? '' : 'none';
+    track.style.transform = 'translateX(' + (-pos * step()) + 'px)';
+  };
+  // Если ушли в копии - незаметно возвращаемся на такие же настоящие фото
+  let wrapTimer = null;
+  const wrap = () => {
+    if (pos >= N && pos < 2 * N) return;
+    pos += pos < N ? N : -N; place(false);
+    void track.offsetWidth; // зафиксировать прыжок, чтобы следующий сдвиг был плавным
+  };
+  const go = d => {
+    wrap(); // на случай частых нажатий: сначала вернуться на круг
+    pos += d; place(true);
+    clearTimeout(wrapTimer); wrapTimer = setTimeout(wrap, smooth ? 650 : 0);
+  };
+  track.addEventListener('transitionend', e => { if (e.target === track) wrap(); });
+  const start = () => { clearInterval(timer); if (!paused) timer = setInterval(() => go(1), 3000); };
+  document.getElementById('carNext').onclick = () => { go(1); start(); };
+  document.getElementById('carPrev').onclick = () => { go(-1); start(); };
+  const pauseBtn = document.getElementById('carPause');
+  pauseBtn.onclick = () => {
+    paused = !paused;
+    pauseBtn.textContent = paused ? '▶ Пуск' : '❚❚ Пауза';
+    pauseBtn.setAttribute('aria-pressed', paused);
+    start();
+  };
+  window.addEventListener('resize', () => place(false));
+  place(false); start();
+
+  // Портфолио на весь экран (карусель на это время стоит)
+  const imgs = originals.map(f => f.querySelector('img'));
   const lb = document.getElementById('lb'), lbImg = document.getElementById('lbImg');
   let cur = 0;
   const show = i => { cur = (i + imgs.length) % imgs.length; lbImg.src = imgs[cur].src.replace('w=700', 'w=1600'); };
-  imgs.forEach((im, i) => im.parentElement.addEventListener('click', () => { show(i); lb.classList.add('open'); }));
-  document.getElementById('lbClose').onclick = () => lb.classList.remove('open');
+  const closeLb = () => { lb.classList.remove('open'); start(); };
+  track.addEventListener('click', e => {
+    const f = e.target.closest('figure'); if (!f) return;
+    show(+f.dataset.i); lb.classList.add('open'); clearInterval(timer);
+  });
+  document.getElementById('lbClose').onclick = closeLb;
   document.getElementById('lbPrev').onclick = e => { e.stopPropagation(); show(cur - 1); };
   document.getElementById('lbNext').onclick = e => { e.stopPropagation(); show(cur + 1); };
-  lb.addEventListener('click', e => { if (e.target === lb) lb.classList.remove('open'); });
+  lb.addEventListener('click', e => { if (e.target === lb) closeLb(); });
   document.addEventListener('keydown', e => {
     if (!lb.classList.contains('open')) return;
-    if (e.key === 'Escape') lb.classList.remove('open');
+    if (e.key === 'Escape') closeLb();
     if (e.key === 'ArrowLeft') show(cur - 1);
     if (e.key === 'ArrowRight') show(cur + 1);
   });
