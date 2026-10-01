@@ -51,7 +51,7 @@
           width: max(110.5cqw, 82.9cqh); transform: translate(9.5%, -2%); }
   /* Фото дневное - делаем свет тёплым, закатным; яркость убавлена (одинаково на компьютере и телефоне) */
   .room::before { content: ""; position: absolute; inset: 0;
-    background: url("https://images.unsplash.com/photo-1628752694918-9282ad817706?w=2000&q=80") center / 100% 100% no-repeat;
+    background: url("img/room.jpg") center / 100% 100% no-repeat;
     filter: sepia(.55) saturate(1.45) hue-rotate(-12deg) brightness(.86) contrast(1.05); }
   /* Лампочки зеркала: ровное тёплое свечение, без мерцания. Места - в процентах от снимка */
   .room i { position: absolute; left: calc(var(--x) * 1%); top: calc(var(--y) * 1%); width: 9%; aspect-ratio: 1;
@@ -242,7 +242,7 @@
       <a class="btn btn-line jump" href="#portfolio">Смотреть образы</a>
     </div>
     <div class="frame">
-      <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=700&q=80" alt="Фото-пример: портрет мастера">
+      <img src="img/master.jpg" alt="Фото-пример: портрет мастера">
     </div>
     <div class="spacer"></div>
   </div>
@@ -293,11 +293,11 @@
       <button class="car-arrow" id="carPrev" type="button" aria-label="Предыдущее фото">‹</button>
       <div class="car-viewport">
         <div class="car-track" id="carTrack">
-          <figure data-i="0"><img src="https://images.unsplash.com/photo-1549236177-77e8271c34b6?w=700&q=80" alt="Образ 1"><figcaption>фото-пример</figcaption></figure>
-          <figure data-i="1"><img src="https://images.unsplash.com/photo-1606158562001-5b5a8729a80b?w=700&q=80" alt="Образ 2"><figcaption>фото-пример</figcaption></figure>
-          <figure data-i="2"><img src="https://images.unsplash.com/photo-1611590027211-b954fd027b51?w=700&q=80" alt="Образ 3"><figcaption>фото-пример</figcaption></figure>
-          <figure data-i="3"><img src="https://images.unsplash.com/photo-1709136331829-033933e1913d?w=700&q=80" alt="Образ 4"><figcaption>фото-пример</figcaption></figure>
-          <figure data-i="4"><img src="https://images.unsplash.com/photo-1762074973099-78f2169c9177?w=700&q=80" alt="Образ 5"><figcaption>фото-пример</figcaption></figure>
+          <figure data-i="0"><img src="img/look-1.jpg" alt="Образ 1"><figcaption>фото-пример</figcaption></figure>
+          <figure data-i="1"><img src="img/look-2.jpg" alt="Образ 2"><figcaption>фото-пример</figcaption></figure>
+          <figure data-i="2"><img src="img/look-3.jpg" alt="Образ 3"><figcaption>фото-пример</figcaption></figure>
+          <figure data-i="3"><img src="img/look-4.jpg" alt="Образ 4"><figcaption>фото-пример</figcaption></figure>
+          <figure data-i="4"><img src="img/look-5.jpg" alt="Образ 5"><figcaption>фото-пример</figcaption></figure>
         </div>
       </div>
       <button class="car-arrow" id="carNext" type="button" aria-label="Следующее фото">›</button>
@@ -403,7 +403,7 @@
   const imgs = originals.map(f => f.querySelector('img'));
   const lb = document.getElementById('lb'), lbImg = document.getElementById('lbImg');
   let cur = 0;
-  const show = i => { cur = (i + imgs.length) % imgs.length; lbImg.src = imgs[cur].src.replace('w=700', 'w=1600'); };
+  const show = i => { cur = (i + imgs.length) % imgs.length; lbImg.src = imgs[cur].src; };
   const closeLb = () => { lb.classList.remove('open'); start(); };
   track.addEventListener('click', e => {
     const f = e.target.closest('figure'); if (!f) return;
